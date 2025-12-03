@@ -18,11 +18,13 @@
 - Використати `pydantic.BaseModel` для вхідних даних і `response_model` у FastAPI.
 - Генерувати OpenAPI автоматично з типів.
 
-# ✅ Виправлений код: main.py (типізація та response_model)
+### ✅ Виправлений код: main.py (типізація та response_model)
 
+```
 @app.get("/user", response_model=UserResponse)
 def get_user(id: int):
 return {"id": id, "name": "Alice"}
+```
 
 ---
 
@@ -43,8 +45,9 @@ return {"id": id, "name": "Alice"}
 - Використати Vault CSI driver для підключення секретів через volume.
 - Заборонити `env.value` через OPA / conftest.
 
-# ✅ Виправлений код: deployment.yaml (Vault CSI)
+### ✅ Виправлений код: deployment.yaml (Vault CSI)
 
+```
 volumes:
 
 - name: secrets
@@ -59,6 +62,7 @@ volumeMounts:
 - name: secrets
   mountPath: /mnt/secrets
   readOnly: true
+```
 
 ---
 
@@ -79,8 +83,9 @@ volumeMounts:
 - Додати `securityContext: readOnlyRootFilesystem: true, runAsNonRoot: true`.
 - Заборонити `hostPath` через OPA / conftest.
 
-# ✅ Виправлений код: deployment.yaml (securityContext)
+### ✅ Виправлений код: deployment.yaml (securityContext)
 
+```
 containers:
 
 - name: user-api
@@ -89,6 +94,7 @@ containers:
   runAsNonRoot: true
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
+```
 
 ---
 
@@ -109,8 +115,9 @@ containers:
 - Додати кроки перевірки коду (Semgrep), образів (Trivy), секретів (Gitleaks).
 - Генерувати SBOM (syft) та підписувати артефакти (cosign).
 
-# ✅ Виправлений код: ci.yml (перевірки та SBOM)
+### ✅ Виправлений код: ci.yml (перевірки та SBOM)
 
+```
 - name: Run Semgrep
   uses: returntocorp/semgrep-action@v2
   with:
@@ -124,6 +131,7 @@ containers:
 
 - name: Sign image
   run: cosign sign user-api:latest
+```
 
 ---
 
@@ -144,14 +152,16 @@ Security Group дозволяє весь трафік на порт 443 (`cidr_b
 - Обмежити CIDR тільки потрібними підмережами або VPN.
 - Додати перевірку tfsec або OPA-політику для SG.
 
-# ✅ Виправлений код: main.tf (обмеження CIDR)
+### ✅ Виправлений код: main.tf (обмеження CIDR)
 
+```
 ingress {
 from_port = 443
 to_port = 443
 protocol = "tcp"
 cidr_blocks = ["10.0.1.0/24"]
 }
+```
 
 ---
 
@@ -171,9 +181,11 @@ cidr_blocks = ["10.0.1.0/24"]
 - Додати генерацію SBOM (`syft`) у CI.
 - Підписувати образ через cosign.
 
-# ✅ Виправлений код: Dockerfile (додано SBOM)
+#### ✅ Виправлений код: Dockerfile (додано SBOM)
 
+```
 RUN pip install syft && syft /app -o json > /app/sbom.json
+```
 
 ---
 
